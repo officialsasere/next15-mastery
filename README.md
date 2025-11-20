@@ -12,7 +12,7 @@ Full-stack production-grade app built live in public while keeping my 9–5 job.
 - Turbopack + Turborepo ready
 
 ## Live Demo
-https://next15-mastery.officialsasere.vercel.app
+https://next15-mastery-officialsasere.vercel.app
 
 ## Goal
 Turn 28 (January 18, 2026) with either:
