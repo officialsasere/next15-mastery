@@ -1,6 +1,7 @@
 // Update your imports:
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http'; // Change from 'drizzle-orm/postgres-js'
+import * as schema from './schema'
 import 'dotenv/config';
 
 if (!process.env.DATABASE_URL) {
@@ -11,5 +12,5 @@ if (!process.env.DATABASE_URL) {
 const sql = neon(process.env.DATABASE_URL); 
 
 // Pass the driver to Drizzle
-export const db = drizzle(sql);
+export const db = drizzle(sql, {schema});
 

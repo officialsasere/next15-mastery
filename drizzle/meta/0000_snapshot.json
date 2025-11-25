@@ -1,5 +1,5 @@
 {
-  "id": "fead7bda-e6ab-4c6c-94b2-cfdb57c52cfa",
+  "id": "b78a3247-2d1b-4978-bfd0-e0a682cd6c6e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -106,7 +106,7 @@
         },
         "author_id": {
           "name": "author_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },

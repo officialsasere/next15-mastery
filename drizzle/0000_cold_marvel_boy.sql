@@ -13,7 +13,7 @@ CREATE TABLE "posts" (
 	"slug" varchar(255) NOT NULL,
 	"published" boolean DEFAULT false,
 	"content" text NOT NULL,
-	"author_id" serial NOT NULL,
+	"author_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "posts_slug_unique" UNIQUE("slug")
 );
