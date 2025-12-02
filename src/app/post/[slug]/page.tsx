@@ -4,44 +4,52 @@ import { posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function PostPage(props: {
   params: Promise<{ slug: string }>
 }) {
 
 const { slug } = await props.params;
-console.log("slug:", slug);
-  const post = await db
+// console.log("slug:", slug);
+  const postData = await db
     .select()
     .from(posts)
     .where(eq(posts.slug, slug))
     .limit(1);
 
-  if (!post[0]) notFound();
-
-  const p = post[0];
+    
+    const post = postData[0];
+    if (!post) notFound();
   return (
     <article className="container max-w-4xl mx-auto py-24 px-4">
-      <h1 className="text-5xl font-bold mb-6">{p.title}</h1>
+      <h1 className="text-5xl font-bold mb-6">{post.title}</h1>
       
-      <div className="relative w-full h-96 mb-12 rounded-xl overflow-hidden">
-        <Image
-          src={`https://picsum.photos/seed/${p.slug}/1200/800`}
-          alt={p.title}
-          fill
-          className="object-cover"
-        />
-      </div>
+       {/* Display uploaded image */}
+      {post.imageUrl && (
+        <div className="relative w-full h-96 mb-12 rounded-xl overflow-hidden">
+          <Image
+            src={post.imageUrl}
+            alt={post.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
 
       <div className="prose prose-lg max-w-none">
-        <div dangerouslySetInnerHTML={{ __html: p.content.replace(/\n/g, "<br>") }} />
+        <div dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, "<br>") }} />
       </div>
 
-      <div className="mt-12">
-        <a href="/dashboard" className="text-blue-600 hover:underline">
-          ← Back to Dashboard
-        </a>
-      </div>
+      <div className="flex gap-4 mt-8">
+  <Button asChild>
+    <Link href={`/post/${post.slug}/edit`}>Edit Post</Link>
+  </Button>
+  <Button variant="outline" asChild>
+    <Link href="/dashboard">← Back to Dashboard</Link>
+  </Button>
+</div>
     </article>
   );
 }

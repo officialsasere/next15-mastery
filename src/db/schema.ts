@@ -16,7 +16,7 @@ export const posts = pgTable("posts", {
   slug: varchar("slug", {length: 255}).unique().notNull(),
   published: boolean("published").default(false),
   content: text("content").notNull(),
-  imageurl: text("imageurl"),
+  imageUrl: text("image_url"),
  authorId: varchar("author_id", { length: 255 })
   .references(() => users.id)
   .notNull(),
