@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { evaluate } from '@mdx-js/mdx';
+import * as runtime from 'react/jsx-runtime';
 
 export default async function PostPage(props: {
   params: Promise<{ slug: string }>
@@ -22,6 +24,12 @@ const { slug } = await props.params;
     
     const post = postData[0];
     if (!post) notFound();
+    // Compile MDX string → React component
+  const { default: MDXContent } = await evaluate(post.content, {
+    ...runtime,
+    // Optional: add custom components later (images, code blocks, etc.)
+    // components: { img: CustomImage, pre: CustomPre }
+  });
   return (
     <article className="container max-w-4xl mx-auto py-24 px-4">
       <h1 className="text-5xl font-bold mb-6">{post.title}</h1>
@@ -37,9 +45,14 @@ const { slug } = await props.params;
           />
         </div>
       )}
-
+{/* 
       <div className="prose prose-lg max-w-none">
         <div dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, "<br>") }} />
+      </div> */}
+
+      {/* Render MDX beautifully */}
+      <div className="prose prose-lg dark:prose-invert max-w-none">
+        <MDXContent />
       </div>
 
       <div className="flex gap-4 mt-8">

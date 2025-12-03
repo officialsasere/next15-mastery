@@ -1,12 +1,24 @@
 // src/app/dashboard/CreatePostForm.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadDropzone } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
+import dynamic from "next/dynamic";
+import { commands } from "@uiw/react-md-editor";
+
+import { Content } from "next/font/google";
+
+
+ 
+ const MDEditor = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => ({ default: mod.default })),
+  { ssr: false }
+);
+
 
 
 type Props = {
@@ -19,11 +31,21 @@ type Props = {
 };
 
 export default function CreatePostForm({ onSubmit, defaultValues }: Props) {
+  const [content, setContent] = useState(defaultValues?.content || "# Start writing...");
   const [imageUrl, setImageUrl] = useState(defaultValues?.imageUrl || "");
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+   const handleContentChange = (value?: string) => {
+    if (value !== undefined) {
+      setContent(value);
+    }
+  };
+ 
 
   return (
     <form action={async (data) => {
         data.append("imageUrl", imageUrl);
+        data.append("content", content); 
         await onSubmit(data);
         if (!defaultValues) setImageUrl(""); // only reset on create
       }} className="bg-muted p-8 rounded-xl max-w-2xl mx-auto space-y-8">
@@ -33,11 +55,40 @@ export default function CreatePostForm({ onSubmit, defaultValues }: Props) {
         defaultValue={defaultValues?.title}
         required
       />
+      <div data-color-mode="light">
+        <MDEditor
+          value={content} // Controlled value
+          onChange={handleContentChange} // Direct state update
+          height={400}
+          preview="edit" // Edit + preview side-by-side
+          commands={[
+            commands.bold,
+            commands.italic,
+            commands.strikethrough,
+            commands.hr,
+            commands.title,
+            commands.divider,
+            commands.link,
+            commands.quote,
+            commands.code,
+            commands.codeBlock,
+            commands.divider,
+            commands.unorderedListCommand,
+            commands.orderedListCommand,
+            commands.checkedListCommand,
+            commands.divider,
+            commands.fullscreen,
+           
+          ]}
+        />
+      </div>
       <Textarea
         name="content"
+        ref={contentRef}
         placeholder="Write your content..."
         rows={10}
         defaultValue={defaultValues?.content}
+        className="sr-only"
         required
       />
 
