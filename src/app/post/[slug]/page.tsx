@@ -8,12 +8,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { evaluate } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
+import { auth } from "@clerk/nextjs/server";
 
 export default async function PostPage(props: {
   params: Promise<{ slug: string }>
 }) {
 
 const { slug } = await props.params;
+const {userId} = await auth();
 // console.log("slug:", slug);
   const postData = await db
     .select()
@@ -24,11 +26,11 @@ const { slug } = await props.params;
     
     const post = postData[0];
     if (!post) notFound();
-    // Compile MDX string → React component
+    const isOwner = post.authorId === userId;
+   
   const { default: MDXContent } = await evaluate(post.content, {
     ...runtime,
-    // Optional: add custom components later (images, code blocks, etc.)
-    // components: { img: CustomImage, pre: CustomPre }
+   
   });
   return (
     <article className="container max-w-4xl mx-auto py-24 px-4">
@@ -42,6 +44,7 @@ const { slug } = await props.params;
             alt={post.title}
             fill
             className="object-cover"
+            unoptimized
           />
         </div>
       )}
@@ -51,18 +54,28 @@ const { slug } = await props.params;
       </div> */}
 
       {/* Render MDX beautifully */}
-      <div className="prose prose-lg dark:prose-invert max-w-none">
+      <div className="prose prose-lg dark:prose-invert max-w-none md:mt-5 mt-10">
         <MDXContent />
       </div>
 
-      <div className="flex gap-4 mt-8">
-  <Button asChild>
+     {isOwner ? (
+       <div className="flex gap-4 mt-8">
+ 
+   <Button asChild>
     <Link href={`/post/${post.slug}/edit`}>Edit Post</Link>
   </Button>
+
   <Button variant="outline" asChild>
     <Link href="/dashboard">← Back to Dashboard</Link>
   </Button>
 </div>
+     ): (
+   <div className="prose prose-lg dark:prose-invert max-w-none md:mt-5 mt-10">
+       <Button variant="outline" asChild> 
+    <Link href="/">← Back to Home</Link>
+  </Button>
+   </div>
+     )}
     </article>
   );
 }

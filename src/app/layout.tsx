@@ -1,7 +1,9 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,35 +16,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "next15-mastery – officialsasere",
-  description: "60-day build in public",
+  title: "Official Sasere Blog",
+  description: "Building a full-stack Next.js 15 blog in public — 11 days, no excuses.",
+  openGraph: {
+     title: "Official Sasere Blog",
+    description: "Building a full-stack Next.js 15 blog in public — 11 days, no excuses.",
+    url: "https://next15-mastery-officialsasere.vercel.app",
+    images: ["/og.png"],
+  },
 };
+
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-   return (
+  return (
     <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton>
-                <button className="bg-black cursor text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                  Sign Up
-                </button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-          {children}
+          <Navbar />
+          <main className="min-h-screen">
+            {children}
+          </main>
         </body>
       </html>
     </ClerkProvider>
-  )
+  );
 }

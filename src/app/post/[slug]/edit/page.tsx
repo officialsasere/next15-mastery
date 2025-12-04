@@ -13,6 +13,7 @@ export default async function EditPost( props: { params: Promise< { slug: string
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
+
   const { slug } = await props.params;
 
   const post = await db

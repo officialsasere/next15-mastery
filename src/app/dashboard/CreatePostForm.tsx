@@ -44,8 +44,8 @@ export default function CreatePostForm({ onSubmit, defaultValues }: Props) {
 
   return (
     <form action={async (data) => {
-        data.append("imageUrl", imageUrl);
-        data.append("content", content); 
+        data.set("imageUrl", imageUrl);
+        data.set("content", content); 
         await onSubmit(data);
         if (!defaultValues) setImageUrl(""); // only reset on create
       }} className="bg-muted p-8 rounded-xl max-w-2xl mx-auto space-y-8">
@@ -82,15 +82,8 @@ export default function CreatePostForm({ onSubmit, defaultValues }: Props) {
           ]}
         />
       </div>
-      <Textarea
-        name="content"
-        ref={contentRef}
-        placeholder="Write your content..."
-        rows={10}
-        defaultValue={defaultValues?.content}
-        className="sr-only"
-        required
-      />
+       <input type="hidden" name="content" value={content} />
+    <input type="hidden" name="imageUrl" value={imageUrl} />
 
    <UploadDropzone<OurFileRouter, "imageUploader">
           endpoint="imageUploader"
@@ -100,13 +93,12 @@ export default function CreatePostForm({ onSubmit, defaultValues }: Props) {
     allowedContent: "text-muted-foreground !text-muted-foreground text-sm",
   }}
           onDrop={(files) => console.log("Dropped:", files)}
-          onClientUploadComplete={(res) => {
-            // console.log("Upload complete:", res);
-            if (res?.[0]?.url) {
-              setImageUrl(res[0].url);
-              alert("Image uploaded!");
-            }
-          }}
+         onClientUploadComplete={(res) => {
+  if (res?.[0]?.ufsUrl) {
+    setImageUrl(res[0].ufsUrl);
+    alert("Image uploaded!");
+  }
+}}
           onUploadError={(error) => {
             console.error("UploadThing error:", error);
             alert("Upload failed: " + error.message);

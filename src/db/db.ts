@@ -1,16 +1,25 @@
-// Update your imports:
+// src/db/db.ts
 import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http'; // Change from 'drizzle-orm/postgres-js'
-import * as schema from './schema'
-import 'dotenv/config';
+import { drizzle } from 'drizzle-orm/neon-http';
+import * as schema from './schema';
+import dotenv from 'dotenv';
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is not set');
-}
 
-// Initialize the Neon driver function
-const sql = neon(process.env.DATABASE_URL); 
+dotenv.config({ path: '.env.local' });
 
-// Pass the driver to Drizzle
-export const db = drizzle(sql, {schema});
+const getDatabaseUrl = () => {
+  const url = process.env.DATABASE_URL;
+  console.log("Database URL:", url);
+  
+  if (!url) {
+    throw new Error('DATABASE_URL is not set in environment variables');
+  }
+  
+  return url;
+};
 
+
+const sql = neon(getDatabaseUrl());
+
+
+export const db = drizzle(sql, { schema });
